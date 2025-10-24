@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: shared-auth
+
+  datasource:
+    url: jdbc:postgresql://aws-1-ap-south-1.pooler.supabase.com:5432/postgres?sslmode=require
+    username: postgres.hgmpbcvzlpvvjqtzmdvc
+    password: adminali
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  flyway:
+    enabled: false
+    locations: classpath:db/migration
+
+app:
+  jwt:
+    secret: "replace_this_with_at_least_32_byte_random_secret_string_please" # set via env in production
+    expiration-ms: 3600000   # 1 hour
+    issuer: shared-auth
+  refresh-token:
+    expiration-ms: 1209600000  # 14 days
+
+
+
+logging:
+  level:
+    root: INFO
+
+
+
+
