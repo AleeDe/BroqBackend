@@ -69,4 +69,6 @@ public class User extends Auditable {
     @Column(name = "enabled", nullable = false)
     @Builder.Default
     private boolean active = true;
+
+    private String profilePictureUrl;
 }

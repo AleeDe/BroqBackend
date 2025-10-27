@@ -3,19 +3,43 @@ spring:
     name: shared-auth
 
   datasource:
-    url: jdbc:postgresql://aws-1-ap-south-1.pooler.supabase.com:5432/postgres?sslmode=require
-    username: postgres.hgmpbcvzlpvvjqtzmdvc
-    password: adminali
+    # Neon pooled connection string (use the pooler host provided by Neon)
+    # Replace credentials with environment variables in production.
+    url: jdbc:postgresql://ep-weathered-sky-ah31fq73-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+    username: neondb_owner
+    password: npg_lMmWv6kNOHP5
     driver-class-name: org.postgresql.Driver
-
+    # Neon also uses a pooled endpoint; check your Neon dashboard for the
+    # pooler mode (transaction vs session) and pool size. If the pooler is in
+    # transaction mode you can safely increase the Hikari pool size. For
+    # production, store the URL/username/password in environment variables
+    # rather than committing secrets to source control.
+    hikari:
+      maximum-pool-size: 1
+      minimum-idle: 0
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      # Stop retrying forever; try for 30s then give up so the log isn't
+      # flooded with repeated "HikariPool - Starting..." messages.
+      initialization-fail-timeout: 30000
+    
   jpa:
     hibernate:
+      # Temporarily disable automatic DDL on startup to avoid extra connections
+      # during schema export/validation which can exhaust Supabase session slots.
+      # Set to 'none' while diagnosing pooling limits; after enabling transaction
+      # pooling on Supabase you can safely revert to 'update' or 'validate'.
       ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+      # Prevent Hibernate from touching JDBC metadata during bootstrap which
+      # can require extra connections. This helps when DB connections are very
+      # limited by the provider's pool_size.
+      hibernate.temp.use_jdbc_metadata_defaults: false
 
   flyway:
     enabled: false

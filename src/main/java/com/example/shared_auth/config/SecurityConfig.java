@@ -42,6 +42,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
         http
+            .cors().and()
             .csrf().disable() // if using cookies for tokens, handle CSRF carefully
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()

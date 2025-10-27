@@ -3,8 +3,6 @@ package com.example.shared_auth.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 

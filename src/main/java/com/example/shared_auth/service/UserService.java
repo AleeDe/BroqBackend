@@ -8,11 +8,6 @@ import com.example.shared_auth.entity.User;
 import com.example.shared_auth.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.authorization.AuthorizationDeniedException;
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -51,16 +46,26 @@ public class UserService {
 
     private UserResponse mapToUserResponse(User user) {
         UserResponse r = new UserResponse();
+        r.setId(user.getId());
         r.setUsername(user.getUsername());
         r.setEmail(user.getEmail());
         r.setDateOfBirth(user.getDateOfBirth());
-        r.setRole(user.getRole());
-        r.setActive(user.isActive());
+        
+        r.setNumberOfBookings(user.getBookings().size());
+        r.setNumberOfFoodOrders(user.getFoodOrders().size());
+        r.setNumberOfActivityBookings(user.getActivityBookings().size());
+        r.setProfilePictureUrl(user.getProfilePictureUrl());
+        r.setNumberOfActiveBookings(user.getBookings().stream().filter(b -> b.getStatus() == "PENDING").toList().size());
+        r.setNumberOfActiveActivityBookings(user.getActivityBookings().stream().filter(ab -> ab.getStatus() == "PENDING").toList().size());
+        r.setNumberOfActiveDiningReservations(user.getBookings().stream().filter(b -> b.getStatus() == "PENDING").toList().size());
+
         return r;
     }
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
+    
 
 
     
